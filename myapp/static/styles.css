@@ -1,0 +1,150 @@
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+    font-family: "Roboto", sans-serif;
+  }
+  
+  .btn.pressed {
+    background-color: #2172FF; /* Change to your desired pressed color */
+    border-color: #2172FF; /* Change to your desired pressed color */
+  }
+  
+  
+  .card {
+    padding: 0px;
+    width: 16rem;
+    height: 24rem;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.2);
+    
+  }
+  .card .specialImage {
+    position: absolute;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
+  }
+  .card h2 {
+    position: absolute;
+    margin: 0;
+    transition: 0.3s ease-out;
+    top: 50%; /* Vertically center within the .card */
+    left: 50%; /* Horizontally center within the .card */
+    transform: translate(-50%, -50%);
+    font-family: "Roboto Condensed", sans-serif;
+    font-weight: normal;
+    text-transform: uppercase;
+    width: 95%;
+    color:black;
+  }
+  
+  .card:hover h2 {
+    transform: translate(-50%, -700%);
+    transition: transform 0.3s ease-out;
+    
+  }
+  
+  .card:hover .special {
+    transform: translate(-50%, -550%);
+    transition: transform 0.3s ease-out;
+  }
+  
+  
+  .card:hover .specialImage {
+    transition: opacity 0.3s ease-in;
+    opacity: 0.3;
+  }
+  
+  .searchText p , .card a {
+    margin: 0;
+    margin: 80px auto; 
+    opacity: 0;
+    max-width: 95%;
+    text-align: center; /* Set initial text color to black */
+    transition: opacity 0.3s ease-out; /* Add color transition */
+  
+  }
+  
+  .card:hover .searchText p , .card:hover a {
+    opacity: 1;
+    margin-top: 180px; /* Space between paragraphs */
+    visibility: visible;
+  
+  }
+  
+  
+  
+  .material-symbols-outlined {
+    vertical-align: middle;
+  }
+  
+  body{
+    background-color:#eee;
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    margin:0;
+   }
+  
+   .height{
+    height: 20vh;
+   }
+   
+  
+   .search{
+   position: relative;
+   box-shadow: 0 0 40px rgba(51, 51, 51, .1);
+     
+   }
+  
+   .search input{
+  
+    height: 60px;
+    text-indent: 25px;
+    border: 2px solid #d6d4d4;
+  
+  
+   }
+  
+  
+   .search input:focus{
+  
+    box-shadow: none;
+    border: 2px solid blue;
+  
+  
+   }
+  
+   .search .fa-search{
+  
+    position: absolute;
+    top: 20px;
+    left: 16px;
+  
+   }
+  
+   .search button{
+  
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: 50px;
+    width: 110px;
+    background: blue;
+  
+   }
+  

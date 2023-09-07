@@ -1,0 +1,213 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Transfer Tracker</title>
+    <meta
+      name="description"
+      content="Track Soccer Transfers Across The World and Never Miss Out Again!"
+    />
+    <meta property="og:title" content="Transfer Tracker" />
+    <meta
+      property="og:description"
+      content="Track Soccer Transfers Across The World and Never Miss Out Again!"
+    />
+    <meta
+      property="og:image"
+      content="https://aheioqhobo.cloudimg.io/v7/_playground-bucket-v2.teleporthq.io_/377e84b2-e699-4e3a-976f-a36d7c0af547/6e6b6b1b-cb17-4cbc-91c1-f870a2de3a52?org_if_sml=1"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta property="twitter:card" content="summary_large_image" />
+
+    <style data-tag="reset-style-sheet">
+      html {  line-height: 1.15;}body {  margin: 0;}* {  box-sizing: border-box;  border-width: 0;  border-style: solid;}p,li,ul,pre,div,h1,h2,h3,h4,h5,h6,figure,blockquote,figcaption {  margin: 0;  padding: 0;}button {  background-color: transparent;}button,input,optgroup,select,textarea {  font-family: inherit;  font-size: 100%;  line-height: 1.15;  margin: 0;}button,select {  text-transform: none;}button,[type="button"],[type="reset"],[type="submit"] {  -webkit-appearance: button;}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner {  border-style: none;  padding: 0;}button:-moz-focus,[type="button"]:-moz-focus,[type="reset"]:-moz-focus,[type="submit"]:-moz-focus {  outline: 1px dotted ButtonText;}a {  color: inherit;  text-decoration: inherit;}input {  padding: 2px 4px;}img {  display: block;}html { scroll-behavior: smooth  }
+    </style>
+    <style data-tag="default-style-sheet">
+      html {
+        font-family: Poppins;
+        font-size: 16px;
+      }
+
+      body {
+        font-weight: 400;
+        font-style:normal;
+        text-decoration: none;
+        text-transform: none;
+        letter-spacing: normal;
+        line-height: 1.15;
+        color: var(--dl-color-gray-black);
+        background-color: var(--dl-color-gray-white);
+
+      }
+    </style>
+    <link
+      rel="shortcut icon"
+      href="{% static 'logo21-1500h (1).png' %}"
+      type="icon/png"
+      sizes="32x32"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <style>
+      @keyframes fade-in-left {
+        0% {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+    </style>
+    <style>
+      [data-thq="thq-dropdown"]:hover > [data-thq="thq-dropdown-list"] {
+          display: flex;
+        }
+
+        [data-thq="thq-dropdown"]:hover > div [data-thq="thq-dropdown-arrow"] {
+          transform: rotate(90deg);
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+  </head>
+  <link href="{% static 'index.css' %}" rel="stylesheet" />
+  <header data-thq="thq-navbar" class="index-navbar">
+    <div class="index-container1">
+      <div class="index-left">
+        <a
+          href="{% url 'index' %}"
+                          rel="noreferrer noopener"
+          class="index-link"
+        >
+          <img
+            alt="image"
+            src="{% static 'logo2-1500h.png'%}"
+            class="index-logo"
+          />
+        </a>
+      </div>
+    </div>
+    <div data-thq="thq-navbar-btn-group" class="index-right">
+      <nav class="index-links">
+        <a
+          href="{% url 'login' %}"
+                          rel="noreferrer noopener"
+          class="index-link02"
+        >
+          LOG IN
+        </a>
+        <a
+          href="{% url 'signup' %}"
+                          rel="noreferrer noopener"
+          class="index-link03"
+        >
+          <span class="index-text02">SIGN UP</span>
+          <br />
+        </a>
+      </nav>
+    </div>
+    <div data-thq="thq-burger-menu" class="index-burger-menu">
+      <svg viewBox="0 0 1024 1024" class="index-icon">
+        <path
+          d="M128 554.667h768c23.552 0 42.667-19.115 42.667-42.667s-19.115-42.667-42.667-42.667h-768c-23.552 0-42.667 19.115-42.667 42.667s19.115 42.667 42.667 42.667zM128 298.667h768c23.552 0 42.667-19.115 42.667-42.667s-19.115-42.667-42.667-42.667h-768c-23.552 0-42.667 19.115-42.667 42.667s19.115 42.667 42.667 42.667zM128 810.667h768c23.552 0 42.667-19.115 42.667-42.667s-19.115-42.667-42.667-42.667h-768c-23.552 0-42.667 19.115-42.667 42.667s19.115 42.667 42.667 42.667z"
+        ></path>
+      </svg>
+    </div>
+    <div data-thq="thq-mobile-menu" class="index-mobile-menu">
+      <div
+        data-thq="thq-mobile-menu-nav"
+        data-role="Nav"
+        class="index-nav"
+      >
+        <div class="index-container2">
+          <img
+            alt="image"
+            src="{% static 'logo2-1500h.png'%}"
+            class="index-image"
+          />
+          <div data-thq="thq-close-menu" class="index-menu-close">
+            <svg viewBox="0 0 1024 1024" class="index-icon02">
+              <path
+                d="M810 274l-238 238 238 238-60 60-238-238-238 238-60-60 238-238-238-238 60-60 238 238 238-238z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+        <nav
+          data-thq="thq-mobile-menu-nav-links"
+          data-role="Nav"
+          class="index-nav1"
+        >
+          <a
+            href="{% url 'login' %}"
+                              rel="noreferrer noopener"
+            class="index-link04"
+          >
+            LOG IN
+          </a>
+          <a
+            href="{% url 'signup' %}"
+                              rel="noreferrer noopener"
+            class="index-link05"
+          >
+            SIGN UP
+          </a>
+          
+        </nav>
+      </div>
+    </div>
+  </header>
+
+
+<!-- Header -->
+<header id="header" class="ex-2-header">
+    <link rel="stylesheet" href="{% static 'logsign.css' %}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Sign Up</h1>
+                <p>Fill Out The Form Below To Make An Account <br> Already Signed Up? Then Just <a class="white" href="{% url 'login' %}">Log In</a></p> 
+
+                <!-- Sign Up Form -->
+                <div class="form-container">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="{{ form.full_name.id_for_label }}">Full Name:</label>
+                            {{ form.full_name }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.username.id_for_label }}">Username:</label>
+                            {{ form.username }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}">Email:</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.password1.id_for_label }}">Password:</label>
+                            {{ form.password1 }}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.password2.id_for_label }}">Confirm Password:</label>
+                            {{ form.password2 }}
+                        </div>
+                        <button type="submit" class="form-control-submit-button">Sign Up</button>
+                    </form>
+                </div> <!-- end of form container -->
+                <!-- end of sign up form -->
+            </div> <!-- end of col -->
+        </div> <!-- end of row -->
+    </div> <!-- end of container -->
+</header> <!-- end of ex-header -->
+<!-- end of header -->
