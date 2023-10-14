@@ -21,11 +21,12 @@ from django.contrib import admin
 from django.urls import path, include
 from myapp import views
 from django.contrib.auth import views as auth
-
+from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('myapp.urls')), 
+    
 
 ]
 

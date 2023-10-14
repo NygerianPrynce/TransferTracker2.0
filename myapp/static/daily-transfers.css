@@ -560,3 +560,130 @@
     margin-bottom: var(--dl-space-space-unit);
   }
 }
+
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+ body {
+	 margin: 0;
+	 width: 100vw;
+	 overflow-x: hidden;
+	 background-color: white;
+	 font-family: 'Open Sans', sans-serif;
+	 font-size: 14.5px;
+	 line-height: 1.4em;
+	 color: Black;
+}
+ * {
+	 box-sizing: border-box;
+}
+ .container {
+	 min-height: 100vh;
+	 width: 100%;
+	 margin: auto;
+	 padding: 1.6em;
+	 display: grid;
+	 justify-content: center;
+	 align-content: start;
+	 grid-gap: 1.6em;
+	 grid-template: auto / repeat(auto-fill, minmax(27em, 27em));
+}
+ .card {
+  overflow: auto;
+	 margin: 0;
+	 height: 15em;
+	 display: flex;
+	 background-color: white;
+	 box-shadow: 1px 3px 3px rgba(0, 10, 20, 0.06);
+    transition: opacity 0.7s ease;
+    border-radius: 5px;
+
+}
+.card:hover {
+  transform: scale(1.04);
+}
+ .card img {
+	 height: 100%;
+	 width: 50%;
+	 max-width: 50%;
+	 object-fit: cover;
+	 flex: 1 1 auto;
+}
+ .card-body {
+	 width: 12em;
+	 max-height: 100%;
+	 flex: 1 1 auto;
+	 display: flex;
+	 flex-flow: column nowrap;
+	 justify-content: flex-start;
+	 padding: 1.6em;
+   padding-left:10px;
+}
+ .card-body button {
+  cursor: pointer;
+  margin-left:10px;
+	 min-width: 8.3em;
+	 flex: none;
+	 align-self: flex-start;
+	 margin-top: 0;
+	 padding: 0.6em 1.2em;
+	 font-size: 0.92em;
+	 color: Black;
+	 background: none;
+	 border: 0.5px solid Black;
+	 border-radius: 2px;
+}
+ .card-body button:hover {
+  border-color: White;
+   background: rgb(36, 97, 255);
+}
+
+ .card-text {
+	 position: relative;
+	 flex: 1;
+	 margin: 0 0 0.8em 0;
+	 padding: 0;
+   
+}
+ .card-text p{
+  max-height:130px;
+  overflow: auto;
+	 margin-top: 0;
+   padding-left:10px;
+   color: Black;
+   font-size: 14px;
+}
+.card-text h2 {
+  padding-left:10px;
+  padding-top:10px;
+  margin-top: 0;
+  color: rgb(33, 114, 255);
+}
+ .card-text:after {
+	 position: absolute;
+	 bottom: 0;
+	 content: "";
+	 width: 100%;
+	 height: 2.8em;
+}
+ a {
+	 color: Black;
+	 text-decoration: none;
+}
+ a:hover {
+	 text-decoration: underline;
+}
+ @media (max-width: 570px) {
+	 .container {
+		 grid-template: auto / 1fr;
+		 padding: 1.0666666667em;
+	}
+	 .card {
+		 flex: 1 1 auto;
+		 display: flex;
+		 background-color: white;
+		 box-shadow: 1px 3px 3px rgba(0, 10, 20, 0.06);
+	}
+	 .card img {
+		 max-width: 45%;
+	}
+}

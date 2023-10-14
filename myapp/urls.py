@@ -5,6 +5,7 @@ from django.conf import settings
 from . import views
 from django.conf.urls.static import static
 
+
 urlpatterns = [
     path('', views.index, name='index'),
     path('run_method', views.run_method, name='run_method'),
@@ -18,5 +19,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('watchlist/', views.watchlist, name='watchlist'),
     path('profile/', views.profile, name='profile'),
+    path('profile/', views.profile_view, name='profile'),
 
 ]

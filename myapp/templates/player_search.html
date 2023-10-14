@@ -316,7 +316,7 @@
                               kardBody.classList.add("card-body");
 
                               const kardText = document.createElement('div');
-                              kardBody.classList.add("card-text");
+                              kardText.classList.add("card-text");
 
                               const playerName = document.createElement('h2');
                               playerName.textContent = subDivContent[0].replace(/\)/g, '');
@@ -336,6 +336,8 @@
                                   }                    
                               }
                               playerInfo.innerText = "Age: " + subDivContent[1].replace(/\)/g, '') + "\n"+ "Position: " + subDivContent[2].replace(/\)/g, '') + "\nClub: " + subDivContent[4].replace(/\)/g, '') + "\n" + str + "\n" + "Market Value: " + subDivContent[6].replace(/\)/g, '');
+                              
+                              
                               kardText.appendChild(playerInfo);
                               kardBody.appendChild(kardText);
 
@@ -347,7 +349,6 @@
                                 
 
                                 kard.appendChild(kardBody);
-                                kard.classList.add("fade-in-from-top");
                                 kardButton.addEventListener("click", function() {
                                   if(localStorage.getItem('pids')){
                                       if(!localStorage.getItem('pids').includes(subDivContent[7].replace(/\)/g, ''))){
@@ -355,7 +356,7 @@
                                           localStorage.setItem('pids', updatedValue);
                                       }
                                   } else{
-                                      localStorage.setItem('pids', subDivContent[7].replace(/\)/g, ''));
+                                      localStorage.setItem('pids', "," + subDivContent[7].replace(/\)/g, ''));
                                   }
                                   if(localStorage.getItem('watchListInfo')){
                                       if(!localStorage.getItem('watchListInfo').includes(subDivContent)){
@@ -364,7 +365,7 @@
                                           localStorage.setItem('watchListInfo', updatedValue);
                                       }
                                   } else{
-                                      localStorage.setItem('watchListInfo', "(Player)" + subDivContent);
+                                      localStorage.setItem('watchListInfo', "***(Player)" + subDivContent);
                                   }   
                                   kard.classList.add("fade-out");
                                   kard.remove();
@@ -395,7 +396,7 @@
                               kardBody.classList.add("card-body");
 
                               const kardText = document.createElement('div');
-                              kardBody.classList.add("card-text");
+                              kardText.classList.add("card-text");
 
                               const clubName = document.createElement('h2');
                               clubName.textContent = subDivContent[0].replace(/\)/g, '');
@@ -431,7 +432,7 @@
                                       localStorage.setItem('cids', updatedValue);
                                   }
                               } else{
-                                  localStorage.setItem('cids', subDivContent[1].replace(/\)/g, ''));
+                                  localStorage.setItem('cids', "," +  subDivContent[1].replace(/\)/g, ''));
                               }
                               if(localStorage.getItem('watchListInfo')){
                                   if(!localStorage.getItem('watchListInfo').includes(subDivContent)){
@@ -439,9 +440,8 @@
                                       localStorage.setItem('watchListInfo', updatedValue);
                                   }
                               } else{
-                                  localStorage.setItem('watchListInfo', "(Club)" + subDivContent);
+                                  localStorage.setItem('watchListInfo', "***(Club)" + subDivContent);
                               }    
-                              kard.classList.add("fade-out-special");
                               kard.remove();    
                                   // You can store the data in a variable or use it in any other way you need.
                                 });
@@ -470,7 +470,7 @@
                               kardBody.classList.add("card-body");
 
                               const kardText = document.createElement('div');
-                              kardBody.classList.add("card-text");
+                              kardText.classList.add("card-text");
 
                               const leagueName = document.createElement('h2');
                               leagueName.textContent = subDivContent[0].replace(/\)/g, '');
@@ -526,7 +526,7 @@
                                       localStorage.setItem('lids', updatedValue);
                                   }
                               } else{
-                                  localStorage.setItem('lids', subDivContent[1].replace(/\)/g, ''));
+                                  localStorage.setItem('lids', "," + subDivContent[1].replace(/\)/g, ''));
                               }
                               if(localStorage.getItem('watchListInfo')){
                                   if(!localStorage.getItem('watchListInfo').includes(subDivContent)){
@@ -534,7 +534,7 @@
                                       localStorage.setItem('watchListInfo', updatedValue);
                                   }
                               } else{
-                                  localStorage.setItem('watchListInfo', "(League)" + subDivContent);
+                                  localStorage.setItem('watchListInfo', "***(League)" + subDivContent);
                               }   
                               kard.classList.add("fade-out-special");
                               kard.remove();

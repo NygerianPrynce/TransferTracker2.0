@@ -172,14 +172,40 @@
 <!-- Header -->
 <header id="header" class="ex-2-header">
     <link rel="stylesheet" href="{% static 'logsign.css' %}">
-    <div class="container">
+    <div class="container" >
         <div class="row">
             <div class="col-lg-12">
                 <h1>Sign Up</h1>
                 <p>Fill Out The Form Below To Make An Account <br> Already Signed Up? Then Just <a class="white" href="{% url 'login' %}">Log In</a></p> 
 
                 <!-- Sign Up Form -->
-                <div class="form-container">
+                <div class="form-container" style="background-color:gray;">
+                  <form method="POST" novalidate>
+                    {% csrf_token %}                      
+                    {% for field in form %}
+                    <p>
+                      {% if field.errors %}
+                      <ul class="errorlist">
+                        {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                      </ul>
+                      {% endif %}
+                       {{ field.label_tag }} {{ field }}
+                    </p>
+                    {% endfor %}
+                    <input type="submit" value="Register" />
+                  </form>
+                  <!--
+                  <form method=post action="users/signup/">{% csrf_token %}
+                    <input type="text" name="phone" placeholde="Phone No">
+                    <input type="text" name="email" placeholde="Email">
+                    <input type="text" name="password1" placeholde="Password">
+                    <input type="text" name="password2" placeholde="Password Again">
+                    <input type="submit" value="signup">
+                    </form> 
+                  -->
+                  <!--
                     <form method="post">
                         {% csrf_token %}
                         <div class="form-group">
@@ -204,6 +230,7 @@
                         </div>
                         <button type="submit" class="form-control-submit-button">Sign Up</button>
                     </form>
+                    -->
                 </div> <!-- end of form container -->
                 <!-- end of sign up form -->
             </div> <!-- end of col -->

@@ -179,6 +179,14 @@
 
                 <!-- Log In Form -->
                 <div class="form-container">
+                  <form method="post" action="/users/login/">{% csrf_token %}
+                    <input type=text placeholder="PhoneNo" name="phone">
+                    <input type=password placeholder="Password" name="password">
+                    <input type="submit" value="login">
+                  </form>
+                  <!--
+
+                 
                     <form method="post">
                         {% csrf_token %}
                         <div class="form-group">
@@ -191,6 +199,7 @@
                         </div>
                         <button type="submit" class="form-control-submit-button">LOG IN</button>
                     </form>
+                     -->
                 </div> <!-- end of form container -->
                 <!-- end of log in form -->
 

@@ -148,7 +148,10 @@
                       data-thq="thq-dropdown-toggle"
                       class="watchlist-dropdown-toggle1"
                     >
+                    <a href="{% url 'profile' %}">
                       <span class="watchlist-text07">PROFILE</span>
+                      <br />
+                    </a> 
                     </div>
                   </li>
                   <li
@@ -159,7 +162,10 @@
                       data-thq="thq-dropdown-toggle"
                       class="watchlist-dropdown-toggle2"
                     >
+                    <a href="{% url 'logout' %}" >
                       <span class="watchlist-text08">LOG OUT</span>
+                      <br />
+                    </a> 
                     </div>
                   </li>
                 </ul>
@@ -260,22 +266,17 @@
 
         <script>
           if (localStorage.getItem('watchListInfo')) {
-            console.log("yuhh");
               // Display the results in the result-container div
               const resultContainer = document.getElementById('result-container');
               resultContainer.innerHTML = ''; // Clear previous results
               items = localStorage.getItem('watchListInfo').split('***');
-              console.log(items);
               for(let item of items) {
+                console.log(item);
                   if (item.indexOf("(Player)") != -1) {
-                      console.log(item);
-                      itemCopy = item;
-                      item = item.slice(8,-1)
-                      console.log(item);
-                      
+                      let itemCopy = item;
+                      item = item.slice(8,-1)                      
                       const subDivContent = item.split(",");
-                      console.log(subDivContent);
-                     
+                     console.log(subDivContent);
       
                       const kard = document.createElement('div');
                       kard.classList.add("card");
@@ -316,188 +317,200 @@
                       kardButton.textContent = "Remove from Watchlist";
       
                       kardBody.appendChild(kardButton);
-      
+                      console.log(localStorage.getItem('pids'))
                       kard.appendChild(kardBody);
                       kard.classList.add("fade-in-from-top");
-                      kardButton.addEventListener("click", function () {
-                        spot = localStorage.getItem('pids').indexOf("," + subDivContent[8].replace(/\)/g, ''));
-                        id = localStorage.getItem('pids').slice(spot, spot + 1 + subDivContent[8].replace(/\)/g, '').length+1);
+                      kardButton.addEventListener("click", function () {     
+      
+                        spot = localStorage.getItem('pids').indexOf("," + subDivContent[subDivContent.length-2]);
+                        id = localStorage.getItem('pids').slice(spot, spot + 1 + subDivContent[subDivContent.length-2].length);
+                        
                         console.log(id);
-                        console.log(localStorage.getItem('pids'));
-                        localStorage.setItem('pids', localStorage.getItem('pids').replace(localStorage.getItem('pids').slice(spot, 1 + spot + subDivContent[8].replace(/\)/g, '').length), ''));
-                        console.log(localStorage.getItem('pids'));
+                        console.log(spot);
+                        
+                        console.log("Before" + localStorage.getItem('pids'));
+                        //console.log(localStorage.getItem('pids').slice(spot+1, 1 + subDivContent[subDivContent.length-2].length), '');
+                       localStorage.setItem('pids', (localStorage.getItem('pids').replace(localStorage.getItem('pids').slice(spot, 1 + spot + id.length-1), '')));
+                        //console.log(localStorage.getItem('pids').replace(localStorage.getItem('pids').slice(spot, 1 + spot + id.length-1), ''));                        
+                        console.log("After" + localStorage.getItem('pids'));
                         spot2 = localStorage.getItem('watchListInfo').indexOf("***" + itemCopy);
                         console.log(itemCopy);
                         console.log("SPOT 2" + spot2);
-                        console.log(localStorage.getItem('watchListInfo').slice(spot2, 3+spot2 + String(itemCopy).length));
+                        //console.log(localStorage.getItem('watchListInfo').slice(spot2, 3+spot2 + String(itemCopy).length));
                         localStorage.setItem('watchListInfo', localStorage.getItem('watchListInfo').replace(localStorage.getItem('watchListInfo').slice(spot2, 3+spot2 + String(itemCopy).length), ''));
-                        console.log(localStorage.getItem('watchListInfo').indexOf("***" + itemCopy));
                         kard.remove();
                       });
       
                       resultContainer.appendChild(kard);
-                  } /*else if (str.indexOf("(Club)") != -1) {
+                  } else if (item.indexOf("(Club)") != -1) {
+                    
+                      let itemCopy = item;
+                      console.log(item);
+                      item = item.slice(6,-1)                      
+                      const subDivContent = item.split(",");
+                     console.log( subDivContent);
       
-                      const inner = str.split("(Club)");
-                      for (let i = 1; i < inner.length; i++) {
-                          const subDivContent = inner[i].slice(1, -1).split(")(");
-
-                          const kard = document.createElement('div');
-                          kard.classList.add("card");
-                          kard.style.border = "border: 1px solid #ccc";
+                      const kard = document.createElement('div');
+                      kard.classList.add("card");
       
-                          const clubImage = document.createElement('img');
-                          clubImage.src = subDivContent[2];
-                          kard.appendChild(clubImage);
+                      const playerImage = document.createElement('img');
+                      playerImage.src = subDivContent[2];
+                      kard.appendChild(playerImage);
       
-                          const kardBody = document.createElement('div');
-                          kardBody.classList.add("card-body");
+                      const kardBody = document.createElement('div');
+                      kardBody.classList.add("card-body");
       
-                          const kardText = document.createElement('div');
-                          kardText.classList.add("card-text");
+                      const kardText = document.createElement('div');
+                      kardText.classList.add("card-text");
       
-                          const clubName = document.createElement('h2');
-                          clubName.textContent = subDivContent[0].replace(/\)/g, '');
-                          kardText.appendChild(clubName);
+                      const playerName = document.createElement('h2');
+                      playerName.textContent = subDivContent[0];
+                      kardText.appendChild(playerName);
       
-                          const clubInfo = document.createElement('p');
-                          let items = subDivContent[3].split(",");
+                      const playerInfo = document.createElement('p');
+                      let nation = subDivContent[3].split(",");
       
-                          str = "Country: ";
-                          // Process each item to either create <img> element or regular text element
-                          for (let index = 0; index < items.length; index += 2) {
-                              const item = items[index].slice(2, -1).trim();
-                              if (index > 0) {
-                                  str = str + " & " + item;
-                              } else {
-                                  str = str + item;
-                              }
+                      let str = "Nationality: ";
+                      // Process each item to either create <img> element or regular text element
+                      for (let index = 0; index < nation.length; index += 2) {
+                          const nationz = nation[index].slice(2, -1).trim();
+                          if (index > 0) {
+                              str = str + " & " + nationz;
+                          } else {
+                              str = str + nationz;
                           }
-                          clubInfo.innerText = "\n" + str + "\n" + "Market Value: " + subDivContent[4].replace(/\)/g, '');
-                          kardText.appendChild(clubInfo);
-                          kardBody.appendChild(kardText)
-      
-                          const kardButton = document.createElement('button');
-                          kardButton.classList.add("btn", "card_btn", "m-0");
-                          kardButton.textContent = "Add to Watchlist";
-      
-                          kardBody.appendChild(kardButton);
-                          kard.appendChild(kardBody);
-                          kardButton.addEventListener("click", function () {
-                              if (localStorage.getItem('cids')) {
-                                  if (!localStorage.getItem('cids').includes(subDivContent[1].replace(/\)/g, ''))) {
-                                      const updatedValue = localStorage.getItem('cids') + ',' + subDivContent[1].replace(/\)/g, '');
-                                      localStorage.setItem('cids', updatedValue);
-                                  }
-                              } else {
-                                  localStorage.setItem('cids', subDivContent[1].replace(/\)/g, ''));
-                              }
-                              if (localStorage.getItem('watchListInfo')) {
-                                  if (!localStorage.getItem('watchListInfo').includes(subDivContent)) {
-                                      const updatedValue = localStorage.getItem('watchListInfo') + '***' + subDivContent;
-                                      localStorage.setItem('watchListInfo', updatedValue);
-                                  }
-                              } else {
-                                  localStorage.setItem('watchListInfo', subDivContent);
-                              }
-                              kard.classList.add("fade-out-special");
-                              kard.remove();
-                          });
-      
-                          resultContainer.appendChild(kard);
                       }
-                  } else if (str.indexOf("(League)") != -1) {
-                      const inner = str.split("(League)");
-                      for (let i = 1; i < inner.length; i++) {
-                          const subDivContent = inner[i].slice(1, -1).split(")(");
+                      playerInfo.innerText = str +  "\nMarket Value: " + subDivContent[5].replace(/\)/g, '');
+                      kardText.appendChild(playerInfo);
+                      kardBody.appendChild(kardText);
+      
+                      const kardButton = document.createElement('button');
+                      kardButton.classList.add("btn", "card_btn", "m-0");
+                      kardButton.textContent = "Remove from Watchlist";
+      
+                      kardBody.appendChild(kardButton);
+                      console.log(localStorage.getItem('pids'))
+                      kard.appendChild(kardBody);
+                      kard.classList.add("fade-in-from-top");
+                      kardButton.addEventListener("click", function () {     
+      
+                        spot = localStorage.getItem('cids').indexOf("," + subDivContent[1]);
+                        id = localStorage.getItem('cids').slice(spot, spot + 1 + subDivContent[1].length);
+                        
+                        console.log(id);
+                        console.log(spot);
+                        
+                        console.log("Before" + localStorage.getItem('cids'));
+                        //console.log(localStorage.getItem('pids').slice(spot+1, 1 + subDivContent[subDivContent.length-2].length), '');
+                       localStorage.setItem('cids', (localStorage.getItem('cids').replace(localStorage.getItem('cids').slice(spot, 1 + spot + id.length-1), '')));
+                        //console.log(localStorage.getItem('pids').replace(localStorage.getItem('pids').slice(spot, 1 + spot + id.length-1), ''));                        
+                        console.log("After" + localStorage.getItem('cids'));
+                        spot2 = localStorage.getItem('watchListInfo').indexOf("***" + itemCopy);
+                        console.log(itemCopy);
+                        console.log("SPOT 2" + spot2);
+                        //console.log(localStorage.getItem('watchListInfo').slice(spot2, 3+spot2 + String(itemCopy).length));
+                        localStorage.setItem('watchListInfo', localStorage.getItem('watchListInfo').replace(localStorage.getItem('watchListInfo').slice(spot2, 3+spot2 + String(itemCopy).length), ''));
+                        kard.remove();
+                      });
+      
+                      resultContainer.appendChild(kard);
+                  } else if (item.indexOf("(League)") != -1) {
+                      let itemCopy = item;
+                      console.log(item);
+                      item = item.slice(8,-1)                      
+                      const subDivContent = item.split(",");
+                     console.log( subDivContent);
+      
+                     
+                     const kard = document.createElement('div');
+                     kard.classList.add("card");
+                     
+                     const leagueImage = document.createElement('img');
+                        leagueImage.src = subDivContent[2]; 
+                      leagueImage.alt = subDivContent[0].replace(/\)/g, '');
+                      kard.appendChild(leagueImage);
 
-                          const kard = document.createElement('div');
-                          kard.classList.add("card");
+                     const kardBody = document.createElement('div');
+                     kardBody.classList.add("card-body");
+
+                     const kardText = document.createElement('div');
+                     kardText.classList.add("card-text");
+
+                     const leagueName = document.createElement('h2');
+                     leagueName.textContent = subDivContent[0].replace(/\)/g, '');
+                     kardText.appendChild(leagueName);
+                     
+                     //{self.type}({self.name-})({self.id})({self.image-})({self.nationality})({self.marketValue})
+                     
+                     const leagueInfo = document.createElement('p');    
+                     let items = subDivContent[6].split(",");
+
+                     str = "Nationality: ";
+                     // Process each item to either create <img> element or regular text element
+                     for (let index = 0; index < items.length; index += 2) {
+                         const item = items[index].slice(0, -1).trim();       
+                         if(index>0){
+                             str = str + " & " + item;
+                         }else{
+                             str = str + item;
+                         }                    
+                     }
+
+                     for (let i = 0; i < (subDivContent.length); i++) {
+                         console.log(subDivContent[i]);
+                         if(subDivContent[i] != undefined){                             
+                         if (subDivContent[i] == "-)"){
+                             subDivContent[i] = "-";
+                         }else{
+                             if(subDivContent[i].indexOf("['") > -1){
+                                 subDivContent[i] = subDivContent[i].replace(/\)/g, '').slice(2, -2);
+                             } else{
+                                 subDivContent[i] = subDivContent[i].replace(/\)/g, '');
+                             }
+                         
+                         }
+                        }
+                     }
+
+                     leagueInfo.innerText = "Number of Clubs: " + subDivContent[3].replace(/\)/g, '') +"\n"+"Number of Players: " + subDivContent[4].replace(/\)/g, '') +"\n"+ "Market Value: " + subDivContent[5].replace(/\)/g, '') +"\n"+ str +"\n"+"Association: " + subDivContent[8].replace(/\)/g, '');
+                     kardText.appendChild(leagueInfo);
+                     kardBody.appendChild(kardText)
+                     
+                     const kardButton = document.createElement('button');
+                       kardButton.classList.add("btn", "card_btn", "m-0");
+                       kardButton.textContent = "Add to Watchlist";
+
+                       kardBody.appendChild(kardButton);
+                     
+                     kard.appendChild(kardBody);
+                      kardButton.addEventListener("click", function () {     
       
-                          const leagueImage = document.createElement('img');
-                          leagueImage.src = subDivContent[2];
-                          leagueImage.alt = subDivContent[0].replace(/\)/g, '');
-                          kard.appendChild(leagueImage);
+                        spot = localStorage.getItem('lids').indexOf("," + subDivContent[1]);
+                        id = localStorage.getItem('lids').slice(spot, spot + 1 + subDivContent[1].length);
+                        
+                        console.log(id);
+                        console.log(spot);
+                        
+                        console.log("Before" + localStorage.getItem('lids'));
+                        //console.log(localStorage.getItem('pids').slice(spot+1, 1 + subDivContent[subDivContent.length-2].length), '');
+                       localStorage.setItem('lids', (localStorage.getItem('lids').replace(localStorage.getItem('lids').slice(spot, 1 + spot + id.length-1), '')));
+                        //console.log(localStorage.getItem('pids').replace(localStorage.getItem('pids').slice(spot, 1 + spot + id.length-1), ''));                        
+                        console.log("After" + localStorage.getItem('lids'));
+                        spot2 = localStorage.getItem('watchListInfo').indexOf("***" + itemCopy);
+                        console.log(itemCopy);
+                        console.log("SPOT 2" + spot2);
+                        //console.log(localStorage.getItem('watchListInfo').slice(spot2, 3+spot2 + String(itemCopy).length));
+                        localStorage.setItem('watchListInfo', localStorage.getItem('watchListInfo').replace(localStorage.getItem('watchListInfo').slice(spot2, 3+spot2 + String(itemCopy).length), ''));
+                        kard.remove();
+                      });
       
-                          const kardBody = document.createElement('div');
-                          kardBody.classList.add("card-body");
-      
-                          const kardText = document.createElement('div');
-                          kardText.classList.add("card-text");
-      
-                          const leagueName = document.createElement('h2');
-                          leagueName.textContent = subDivContent[0].replace(/\)/g, '');
-                          kardText.appendChild(leagueName);
-      
-                          const leagueInfo = document.createElement('p');
-                          let items = subDivContent[6].split(",");
-      
-                          str = "Nationality: ";
-                          // Process each item to either create <img> element or regular text element
-                          for (let index = 0; index < items.length; index += 2) {
-                              const item = items[index].slice(2, -1).trim();
-                              if (index > 0) {
-                                  str = str + " & " + item;
-                              } else {
-                                  str = str + item;
-                              }
-                          }
-      
-                          for (let i = 0; i < (subDivContent.length); i++) {
-                              console.log(subDivContent[i]);
-                              if (subDivContent[i] != undefined) {
-                                  if (subDivContent[i] == "-)") {
-                                      subDivContent[i] = "-";
-                                  } else {
-                                      if (subDivContent[i].indexOf("['") > -1) {
-                                          subDivContent[i] = subDivContent[i].replace(/\)/g, '').slice(2, -2);
-                                      } else {
-                                          subDivContent[i] = subDivContent[i].replace(/\)/g, '');
-                                      }
-                                  }
-      
-                              }
-                          }
-      
-                          leagueInfo.innerText = "Number of Clubs: " + subDivContent[3].replace(/\)/g, '') + "\n" + "Number of Players: " + subDivContent[4].replace(/\)/g, '') + "\n" + "Market Value: " + subDivContent[5].replace(/\)/g, '') + "\n" + str + "\n" + "Association: " + subDivContent[7].replace(/\)/g, '');
-                          kardText.appendChild(leagueInfo);
-                          kardBody.appendChild(kardText)
-      
-                          const kardButton = document.createElement('button');
-                          kardButton.classList.add("btn", "card_btn", "m-0");
-                          kardButton.textContent = "Add to Watchlist";
-      
-                          kardBody.appendChild(kardButton);
-      
-                          kard.appendChild(kardBody);
-                          kardButton.addEventListener("click", function () {
-                              if (localStorage.getItem('lids')) {
-                                  if (!localStorage.getItem('lids').includes(subDivContent[1].replace(/\)/g, ''))) {
-                                      const updatedValue = localStorage.getItem('lids') + ',' + subDivContent[1].replace(/\)/g, '');
-                                      localStorage.setItem('lids', updatedValue);
-                                  }
-                              } else {
-                                  localStorage.setItem('lids', subDivContent[1].replace(/\)/g, ''));
-                              }
-                              if (localStorage.getItem('watchListInfo')) {
-                                  if (!localStorage.getItem('watchListInfo').includes(subDivContent)) {
-                                      const updatedValue = localStorage.getItem('watchListInfo') + '***' + subDivContent;
-                                      localStorage.setItem('watchListInfo', updatedValue);
-                                  }
-                              } else {
-                                  localStorage.setItem('watchListInfo', subDivContent);
-                              }
-                              kard.classList.add("fade-out-special");
-                              kard.remove();
-                          });
-      
-                          resultContainer.appendChild(kard);
+                      resultContainer.appendChild(kard);
                       }
-                  }*/
-              };
+                  }/**/
+              
           } else {
               // Display error message in the result-container div
-              document.getElementById('result-container').innerText = 'Error: ' + data.message;
+              document.getElementById('result-container').innerText = 'Error: ' + "oof";
           }
       </script>
       

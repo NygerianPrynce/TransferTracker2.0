@@ -598,6 +598,7 @@
   }
 }
 
+
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
  body {
 	 margin: 0;
@@ -676,12 +677,12 @@
  .card-text {
 	 position: relative;
 	 flex: 1;
-	 overflow: auto;
 	 margin: 0 0 0.8em 0;
 	 padding: 0;
    
 }
  .card-text p{
+  max-height:87px;
   overflow: auto;
 	 margin-top: 0;
    padding-left:10px;
@@ -722,18 +723,4 @@
 	 .card img {
 		 max-width: 45%;
 	}
-}
- 
-.fade-in-from-top {
-  position: relative;
-  overflow: hidden;
-}
-
-.fade-out-special {
-  opacity: 0;
-  transition: opacity 0.5s ease; /* Adding a smooth transition */
-}
-
-.fade-out {
-  opacity: 0;
 }
