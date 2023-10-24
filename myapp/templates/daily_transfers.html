@@ -57,6 +57,8 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
       data-tag="font"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
     <style>
       @keyframes fade-in-left {
         0% {
@@ -265,150 +267,118 @@
         </div>
         <div id="result-container" class="container"></div>
         <script>
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        // Does this cookie string begin with the name we want?
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
+          var user_id = "{{ user_id }}";
+
+          function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
                     }
                 }
-                return cookieValue;
             }
-             // Add an event listener to the "Run Daily Transferz" button
-             document.getElementById('run-daily-transferz-button').addEventListener('click', function () {
-              const csrfToken = getCookie('csrftoken');
-              // Retrieve data from localStorage
-              const pids = localStorage.getItem('pids');
-              const cids = localStorage.getItem('cids');
-              const lids = localStorage.getItem('lids');
-            
-              console.log(pids);
-              console.log(cids);
-              console.log(lids);
-            
-              // Create the request body data as a JavaScript object
-            
-              // Make the POST request to the server
-              fetch(`/run_daily_transferz?pids=${encodeURIComponent(pids)}&cids=${encodeURIComponent(cids)}&lids=${encodeURIComponent(lids)}`)
-                .then(response => response.json())
-                .then(data => {
-                  console.log(data); // For debugging purposes, check the response in the console
-                  if (data.status === 'success') {
-                    const resultContainer = document.getElementById('result-container');
-                    resultContainer.innerHTML = ''; // Clear previous results
-                    resultContainer.classList.add("appear");
-                    const gB = document.getElementById("run-daily-transferz-button");
-                    gB.classList.remove("appear");
-                    gB.classList.add("dissapear");
-                    data.result.forEach(transferStr => {
-                      let str = "";
-                      if (transferStr == null) {
-                      } else {
-                        str = transferStr.toString();
-                      }
-            
-                      const subDivContent = str.slice(1, -1).split(")(");
-                      console.log(subDivContent);
-            
-                      const kard = document.createElement('div');
-                      kard.classList.add("card");
-                      kard.style.border = "1px solid #ccc";
-            
-                      const playerImage = document.createElement('img');
-                      playerImage.src = subDivContent[1];
-                      kard.appendChild(playerImage);
-            
-                      const kardBody = document.createElement('div');
-                      kardBody.classList.add("card-body");
-            
-                      const kardText = document.createElement('div');
-                      kardText.classList.add("card-text");
-            
-                      const playerName = document.createElement('h2');
-                      playerName.textContent = subDivContent[0].replace(/\)/g, '');
-                      kardText.appendChild(playerName);
-            
-                      const playerInfo = document.createElement('p');
-                      playerInfo.innerText = "Age: " + subDivContent[2].replace(/\)/g, '') + "\n" + "Position: " + subDivContent[3].replace(/\)/g, '') + "\nClub Left: " + subDivContent[4].replace(/\)/g, '') + "\nLeague Left: " + subDivContent[6].replace(/\)/g, '') + "\nClub Joined: " + subDivContent[8].replace(/\)/g, '') + "\nLeague Joined: " + subDivContent[10].replace(/\)/g, '') + "\n" + "Fee: " + subDivContent[12].replace(/\)/g, '');
-            
-                      kardText.appendChild(playerInfo);
-                      // Create a table element
-                      /*var table = document.createElement('table');
+            return cookieValue;
+        }
 
-                      // Create a table row
-                      var row1 = document.createElement('tr');
-                      var row2 = document.createElement('tr');
-                      var row3 = document.createElement('tr');
-                      var row4 = document.createElement('tr');
+var items;
+var pids;
+var cids;
+var lids;
 
-                      // Create the first cell with an image
-                      var cell1 = document.createElement('td');
-                      var image1 = document.createElement('img');
-                      image1.src = subDivContent[5]; // Replace with your image URL
-                      cell1.appendChild(image1);
+// Add an event listener to the "Run Daily Transferz" button
+document.getElementById('run-daily-transferz-button').addEventListener('click', function () {
+    const csrfToken = getCookie('csrftoken');
+    
+    // Retrieve data from localStorage
+    fetch("{% static 'info.csv' %}")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(csvContent => {
+            // Now you can work with the CSV content
+            console.log(user_id);
+            const lines = csvContent.trim().split('\n');
+            if (user_id <= lines.length) {
+                const user = lines[user_id].split('|');
+                console.log(user);
+                pids = user[5];
+                cids = user[6];
+                lids = user[7];
+                console.log(pids);
 
-                      // Create the second cell with text
-                      var cell2 = document.createElement('td');
-                      cell2.textContent = 'Went to';
+                // Make the POST request to the server
+                fetch(`/run_daily_transferz?pids=${encodeURIComponent(pids)}&cids=${encodeURIComponent(cids)}&lids=${encodeURIComponent(lids)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data); // For debugging purposes, check the response in the console
+                        if (data.status === 'success') {
+                            const resultContainer = document.getElementById('result-container');
+                            resultContainer.innerHTML = ''; // Clear previous results
+                            resultContainer.classList.add("appear");
+                            const gB = document.getElementById("run-daily-transferz-button");
+                            gB.classList.remove("appear");
+                            gB.classList.add("dissapear");
+                            data.result.forEach(transferStr => {
+                                let str = "";
+                                if (transferStr == null) {
+                                } else {
+                                    str = transferStr.toString();
+                                }
 
-                      // Create the third cell with an image
-                      var cell3 = document.createElement('td');
-                      var image2 = document.createElement('img');
-                      image2.src = subDivContent[9]; // Replace with your image URL
-                      cell3.appendChild(image2);
+                                const subDivContent = str.slice(1, -1).split(")(");
+                                console.log(subDivContent);
 
-                      var cell11 = document.createElement('td');
-                      var image11 = document.createElement('img');
-                      image11.src = subDivContent[7].replace("tiny", "medium"); // Replace with your image URL
-                      cell11.appendChild(image11);
+                                const kard = document.createElement('div');
+                                kard.classList.add("card");
+                                kard.style.border = "1px solid #ccc";
 
-                      // Create the second cell with text
-                      var cell21 = document.createElement('td');
-                      cell21.textContent = 'Went to';
+                                const playerImage = document.createElement('img');
+                                playerImage.src = subDivContent[1];
+                                kard.appendChild(playerImage);
 
-                      // Create the third cell with an image
-                      var cell31 = document.createElement('td');
-                      var image21 = document.createElement('img');
-                      image21.src = subDivContent[11]; // Replace with your image URL
-                      cell31.appendChild(image21);
+                                const kardBody = document.createElement('div');
+                                kardBody.classList.add("card-body");
 
-                      // Append cells to the row
-                      row1.appendChild(cell1);
-                      row1.appendChild(cell2);
-                      row1.appendChild(cell3);
+                                const kardText = document.createElement('div');
+                                kardText.classList.add("card-text");
 
-                      row2.appendChild(cell11);
-                      row2.appendChild(cell21);
-                      row2.appendChild(cell31);
+                                const playerName = document.createElement('h2');
+                                playerName.textContent = subDivContent[0].replace(/\)/g, '');
+                                kardText.appendChild(playerName);
 
-                      // Append the row to the table
-                      table.appendChild(row1);
-                      
-                      table.appendChild(row2);
+                                const playerInfo = document.createElement('p');
+                                playerInfo.innerText = "Age: " + subDivContent[2].replace(/\)/g, '') + "\n" + "Position: " + subDivContent[3].replace(/\)/g, '') + "\nClub Left: " + subDivContent[4].replace(/\)/g, '') + "\nLeague Left: " + subDivContent[6].replace(/\)/g, '') + "\nClub Joined: " + subDivContent[8].replace(/\)/g, '') + "\nLeague Joined: " + subDivContent[10].replace(/\)/g, '') + "\n" + "Fee: " + subDivContent[12].replace(/\)/g, '');
 
-                      // Add the table to the body of the document
-                      kardBody.appendChild(table);*/
-                      kardBody.appendChild(kardText);  
+                                kardText.appendChild(playerInfo);
+                                // Create a table element
+                                /*var table = document.createElement('table');
+                                // ... (rest of your code for creating table)
+                                kardBody.appendChild(table);*/
 
-                              
-            
-                      kard.appendChild(kardBody);
+                                kardBody.appendChild(kardText);
 
-                      
-            
-                      resultContainer.appendChild(kard);
-                    });
-                  }
-                })
-                .catch(error => console.error('Error:', error));
-            });
-            
+                                kard.appendChild(kardBody);
+
+                                resultContainer.appendChild(kard);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                console.error('User not found in the CSV.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+});
+
             
         </script>
         <footer class="daily-transfers-footer">

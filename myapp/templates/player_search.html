@@ -270,6 +270,22 @@
         </div>
         <div id="result-container" class="container"></div>
       <script>
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+        var user_id = "{{ user_id }}";
+        
           const searchButton = document.getElementById('search-button');
           const searchInput = document.getElementById('search-input');
   
@@ -279,15 +295,16 @@
           fetch(`/run_method?search_term=${encodeURIComponent(searchInput)}`)
               .then(response => response.json())
               .then(data => {
-                  console.log(data); // For debugging purposes, check the response in the console
+                  console.log(user_id);
+                  //console.log(data); // For debugging purposes, check the response in the console
                   if (data.status === 'success') {
-                      
+                    var skip = false;
   
                       // Display the results in the result-container div
                       const resultContainer = document.getElementById('result-container');
                       resultContainer.innerHTML = ''; // Clear previous results
                       resultContainer.classList.add("appear");
-                      data.result.forEach(transferStr => {
+                      data.result.forEach(async (transferStr) => {
                           let str = "";
                           if(transferStr == null){
                           } else{
@@ -298,12 +315,36 @@
                               const inner = str.split("(Player)");
                               for (let i = 1; i < inner.length; i++) {
                               const subDivContent = inner[i].slice(1, -1).split(")(");
-                              if(localStorage.getItem('pids').includes(subDivContent[7].replace(/\)/g, ''))){
-                                  console.log("skipping cids");
-                                  console.log(subDivContent[7].replace(/\)/g, ''));
-                                  continue;
-                              }
-  
+                              // Fetch the CSV file
+                              try {
+                                const response = await fetch("{% static 'info.csv' %}");
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                const csvContent = await response.text();
+            
+                                // Now you can work with the CSV content
+                                const lines = csvContent.trim().split('\n');
+                                if (user_id <= lines.length) {
+                                    
+                                    const user = lines[user_id].split('|');
+                                    
+                                    if (user[5].includes(subDivContent[7].replace(/\)/g, ''))) {
+                                        console.log("skipping pids");
+                                        console.log(subDivContent[7].replace(/\)/g, ''));
+                                        skip = true;
+                                    }
+                                } else {
+                                    console.error('User not found in the CSV.');
+                                }
+                            } catch (error) {
+                                console.error('There was a problem fetching the CSV file:', error);
+                            }
+                        
+                            if (skip === true) {
+                              skip = false;
+                              continue; // Skip this iteration
+                            }
                               const kard = document.createElement('div');
                               kard.classList.add("card");
                               kard.style.border = "border: 1px solid #ccc";
@@ -350,23 +391,57 @@
 
                                 kard.appendChild(kardBody);
                                 kardButton.addEventListener("click", function() {
-                                  if(localStorage.getItem('pids')){
-                                      if(!localStorage.getItem('pids').includes(subDivContent[7].replace(/\)/g, ''))){
-                                          const updatedValue = localStorage.getItem('pids') + ',' + subDivContent[7].replace(/\)/g, '');
-                                          localStorage.setItem('pids', updatedValue);
+
+                                  // Fetch the CSV file
+                                  fetch("{% static 'info.csv' %}")
+                                  .then(response => {
+                                      if (!response.ok) {
+                                          throw new Error('Network response was not ok');
                                       }
-                                  } else{
-                                      localStorage.setItem('pids', "," + subDivContent[7].replace(/\)/g, ''));
-                                  }
-                                  if(localStorage.getItem('watchListInfo')){
-                                      if(!localStorage.getItem('watchListInfo').includes(subDivContent)){
-                                          console.log(subDivContent);
-                                          const updatedValue = localStorage.getItem('watchListInfo') + '***(Player)' + subDivContent;
-                                          localStorage.setItem('watchListInfo', updatedValue);
+                                      return response.text();
+                                  })
+                                  .then(csvContent => {
+                                      // Now you can work with the CSV content
+                                      const lines = csvContent.trim().split('\n');
+                                      if (user_id <= lines.length) {
+                                          const user = lines[user_id].split('|');
+                                          console.log(user);
+                                          user[5] = user[5] + "," + subDivContent[7].replace(/\)/g, '');
+                                          place = "***(Player)" + subDivContent;
+                                          console.log(place);
+                                          user[4] = user[4] + place;
+                                          lines[user_id] = user.join('|');
+                                          console.log(lines);
+                                          console.log(csvContent);
+
+                                          const modifiedCSV = lines.join('\n');
+                                          console.log(modifiedCSV)
+
+                                          fetch("{% url 'update_csv_file' %}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded',
+                                                'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token
+                                            },
+                                            body: `modifiedCSV=${encodeURIComponent(modifiedCSV)}`
+                                        })
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                throw new Error('Network response was not ok');
+                                            }
+                                            console.log('CSV file has been updated.');
+                                        })
+                                        .catch(error => {
+                                            console.error('There was a problem updating the CSV file:', error);
+                                        });
+
+                                      } else {
+                                          console.error('User not found in the CSV.');
                                       }
-                                  } else{
-                                      localStorage.setItem('watchListInfo', "***(Player)" + subDivContent);
-                                  }   
+                                  })
+                                  .catch(error => {
+                                      console.error('There was a problem fetching the CSV file:', error);
+                                  });
                                   kard.classList.add("fade-out");
                                   kard.remove();
                                 });
@@ -378,11 +453,36 @@
                               const inner = str.split("(Club)");
                               for (let i = 1; i < inner.length; i++) {
                               const subDivContent = inner[i].slice(1, -1).split(")(");
-                              if(localStorage.getItem('cids').includes(subDivContent[1].replace(/\)/g, ''))){
-                                  console.log("skipping cids");
-                                  console.log(subDivContent[1].replace(/\)/g, ''));
-                                  continue;
-                              }
+                              // Fetch the CSV file
+                              try {
+                                const response = await fetch("{% static 'info.csv' %}");
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                const csvContent = await response.text();
+            
+                                // Now you can work with the CSV content
+                                const lines = csvContent.trim().split('\n');
+                                if (user_id <= lines.length) {
+                                    
+                                    const user = lines[user_id].split('|');
+                                    
+                                    if (user[6].includes(subDivContent[1].replace(/\)/g, ''))) {
+                                        console.log("skipping cids");
+                                        console.log(subDivContent[1].replace(/\)/g, ''));
+                                        skip = true;
+                                    }
+                                } else {
+                                    console.error('User not found in the CSV.');
+                                }
+                            } catch (error) {
+                                console.error('There was a problem fetching the CSV file:', error);
+                            }
+                        
+                            if (skip === true) {
+                              skip = false;
+                              continue; // Skip this iteration
+                            }
                               
                               const kard = document.createElement('div');
                               kard.classList.add("card");
@@ -426,22 +526,64 @@
                                 kardBody.appendChild(kardButton);
                                 kard.appendChild(kardBody);
                                 kardButton.addEventListener("click", function() {
-                              if(localStorage.getItem('cids')){
-                                  if(!localStorage.getItem('cids').includes(subDivContent[1].replace(/\)/g, ''))){
-                                      const updatedValue = localStorage.getItem('cids') + ',' + subDivContent[1].replace(/\)/g, '');
-                                      localStorage.setItem('cids', updatedValue);
-                                  }
-                              } else{
-                                  localStorage.setItem('cids', "," +  subDivContent[1].replace(/\)/g, ''));
-                              }
-                              if(localStorage.getItem('watchListInfo')){
-                                  if(!localStorage.getItem('watchListInfo').includes(subDivContent)){
-                                      const updatedValue = localStorage.getItem('watchListInfo') + '***(Club)' + subDivContent;
-                                      localStorage.setItem('watchListInfo', updatedValue);
-                                  }
-                              } else{
-                                  localStorage.setItem('watchListInfo', "***(Club)" + subDivContent);
-                              }    
+                                  // Fetch the CSV file
+                                  fetch("{% static 'info.csv' %}")
+                                  .then(response => {
+                                      if (!response.ok) {
+                                          throw new Error('Network response was not ok');
+                                      }
+                                      return response.text();
+                                  })
+                                  .then(csvContent => {
+                                      // Now you can work with the CSV content
+                                      const lines = csvContent.trim().split('\n');
+                                      if (user_id <= lines.length) {
+                                          const user = lines[user_id].split('|');
+                                          console.log(user);
+                                          user[6] = user[6] + ',' + subDivContent[1].replace(/\)/g, '');
+                                          place = "***(Club)" + subDivContent;
+                                          console.log(place);
+                                          user[4] = user[4] + place;
+                                          lines[user_id] = user.join('|');
+                                          console.log(lines);
+                                          console.log(csvContent);
+
+                                          const modifiedCSV = lines.join('\n');
+                                          console.log(modifiedCSV)
+
+                                          fetch("{% url 'update_csv_file' %}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded',
+                                                'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token
+                                            },
+                                            body: `modifiedCSV=${encodeURIComponent(modifiedCSV)}`
+                                        })
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                throw new Error('Network response was not ok');
+                                            }
+                                            console.log('CSV file has been updated.');
+                                        })
+                                        .catch(error => {
+                                            console.error('There was a problem updating the CSV file:', error);
+                                        });
+
+                                      } else {
+                                          console.error('User not found in the CSV.');
+                                      }
+                                  })
+                                  .catch(error => {
+                                      console.error('There was a problem fetching the CSV file:', error);
+                                  });
+
+
+
+
+
+
+
+                              
                               kard.remove();    
                                   // You can store the data in a variable or use it in any other way you need.
                                 });
@@ -453,11 +595,36 @@
                               const inner = str.split("(League)");
                               for (let i = 1; i < inner.length; i++) {
                               const subDivContent = inner[i].slice(1, -1).split(")(");
-                              if(localStorage.getItem('lids').includes(subDivContent[1].replace(/\)/g, ''))){
-                                  console.log("skipping ldis");
-                                  console.log(subDivContent[1].replace(/\)/g, ''));
-                                  continue;
-                              }
+                              // Fetch the CSV file
+                              try {
+                                const response = await fetch("{% static 'info.csv' %}");
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                const csvContent = await response.text();
+            
+                                // Now you can work with the CSV content
+                                const lines = csvContent.trim().split('\n');
+                                if (user_id <= lines.length) {
+                                    
+                                    const user = lines[user_id].split('|');
+                                    
+                                    if (user[7].includes(subDivContent[1].replace(/\)/g, ''))) {
+                                        console.log("skipping lids");
+                                        console.log(subDivContent[1].replace(/\)/g, ''));
+                                        skip = true;
+                                    }
+                                } else {
+                                    console.error('User not found in the CSV.');
+                                }
+                            } catch (error) {
+                                console.error('There was a problem fetching the CSV file:', error);
+                            }
+                        
+                            if (skip === true) {
+                              skip = false;
+                                continue; // Skip this iteration
+                            }
                               const kard = document.createElement('div');
                               kard.classList.add("card");
                               
@@ -520,22 +687,57 @@
                               
                               kard.appendChild(kardBody);
                               kardButton.addEventListener("click", function() {
-                              if(localStorage.getItem('lids')){
-                                  if(!localStorage.getItem('lids').includes(subDivContent[1].replace(/\)/g, ''))){
-                                      const updatedValue = localStorage.getItem('lids') + ',' + subDivContent[1].replace(/\)/g, '');
-                                      localStorage.setItem('lids', updatedValue);
-                                  }
-                              } else{
-                                  localStorage.setItem('lids', "," + subDivContent[1].replace(/\)/g, ''));
-                              }
-                              if(localStorage.getItem('watchListInfo')){
-                                  if(!localStorage.getItem('watchListInfo').includes(subDivContent)){
-                                      const updatedValue = localStorage.getItem('watchListInfo') + '***(League)' + subDivContent;
-                                      localStorage.setItem('watchListInfo', updatedValue);
-                                  }
-                              } else{
-                                  localStorage.setItem('watchListInfo', "***(League)" + subDivContent);
-                              }   
+                                // Fetch the CSV file
+                                fetch("{% static 'info.csv' %}")
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.text();
+                                })
+                                .then(csvContent => {
+                                    // Now you can work with the CSV content
+                                    const lines = csvContent.trim().split('\n');
+                                    if (user_id <= lines.length) {
+                                        const user = lines[user_id].split('|');
+                                        console.log(user);
+                                        user[7] = user[7] + ',' + subDivContent[1].replace(/\)/g, '');
+                                        place = "***(League)" + subDivContent;
+                                        console.log(place);
+                                        user[4] = user[4] + place;
+                                        lines[user_id] = user.join('|');
+                                        console.log(lines);
+                                        console.log(csvContent);
+
+                                        const modifiedCSV = lines.join('\n');
+                                        console.log(modifiedCSV)
+
+                                        fetch("{% url 'update_csv_file' %}", {
+                                          method: 'POST',
+                                          headers: {
+                                              'Content-Type': 'application/x-www-form-urlencoded',
+                                              'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token
+                                          },
+                                          body: `modifiedCSV=${encodeURIComponent(modifiedCSV)}`
+                                      })
+                                      .then(response => {
+                                          if (!response.ok) {
+                                              throw new Error('Network response was not ok');
+                                          }
+                                          console.log('CSV file has been updated.');
+                                      })
+                                      .catch(error => {
+                                          console.error('There was a problem updating the CSV file:', error);
+                                      });
+
+                                    } else {
+                                        console.error('User not found in the CSV.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('There was a problem fetching the CSV file:', error);
+                                });
+
                               kard.classList.add("fade-out-special");
                               kard.remove();
                                        

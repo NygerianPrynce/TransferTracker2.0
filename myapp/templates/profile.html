@@ -247,54 +247,219 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-<div class="container-xl px-4 mt-4">
-    <div class="row">
-        <div class="col-xl-12">
+<div class="container-xl px-4 mt-4 align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="row align-items-center justify-content-center">
+        <div class="col-xl-6">
             <!-- Account details card-->
             <div class="card mb-4">
                 <div class="card-header">Account Details</div>
                 <div class="card-body">
-                    <form>
-                        <!-- Form Group (username)-->
-                        <div class="mb-3">
-                            <label class="small mb-1" for="inputUsername">Username</label>
-                            <input class="form-control" id="inputUsername" type="text" placeholder="Want to switch? Enter new Username here...."  value={{ user_data.username }}>
-                        </div>
+                  <form id="profile-form">
+                    <div class="mb-3">
+                      <label>Notification Preferences:</label>
+                      <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="emailNotifications" name="emailNotifications">
+                          <label class="form-check-label" for="emailNotifications">Receive Email Notifications</label>
+                      </div>
+                      <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="phoneNotifications" name="phoneNotifications">
+                          <label class="form-check-label" for="phoneNotifications">Receive Phone Notifications</label>
+                      </div>
+                  </div>
 
-                        <!-- Form Group (email address)-->
-                        <div class="mb-3">
-                            <label class="small mb-1" for="inputEmailAddress">Email address</label>
-                            <input class="form-control" id="inputEmailAddress" type="email" placeholder="Want to switch? Enter new Email here....">
-                        </div>
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (phone number)-->
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="inputPhone">Phone number</label>
-                                <input class="form-control" id="inputPhone" type="tel" placeholder="Want to switch? Enter new Phone Number here....">
-                            </div>
-                            <!-- Form Group (Password)-->
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="inputBirthday">Birthday</label>
-                                <input class="form-control" id="inputBirthday" type="text" name="birthday" placeholder="Enter new password here...">
-                            </div>
-                        </div>
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (first name)-->
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="inputFirstName">New Password</label>
-                                <input class="form-control" id="inputFirstName" type="text" placeholder="Enter your first name" value="Valerie">
-                            </div>
-                            <!-- Form Group (last name)-->
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="inputLastName">Confirm Password</label>
-                                <input class="form-control" id="inputLastName" type="text" placeholder="Enter your last name" value="Luna">
-                            </div>
-                        </div>
-                        <!-- Save changes button-->
-                        <button class="btn btn-primary" type="button">Save changes</button>
-                    </form>
+                    <a href="{% url 'password_change' %}" class="btn btn-warning ">Change Password</a>
+                    
+            </form>
+            <script>
+              
+              // Access the message from the context variable
+              var message = "{{ message }}";
+
+              // Output the message to the browser's console
+              console.log(message);
+
+
+              function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+              var user_id = "{{ user_id }}";
+              const emailNotificationsCheckbox = document.getElementById("emailNotifications");
+              const phoneNotificationsCheckbox = document.getElementById("phoneNotifications");
+          
+              console.log(user_id);
+
+              async function fetchData() {
+                try {
+                  const response = await fetch("{% static 'info.csv' %}");
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const csvContent = await response.text();
+
+                // Now you can work with the CSV content
+                const lines = csvContent.trim().split('\n');
+                if (user_id <= lines.length) {
+                    
+                    const user = lines[user_id].split('|');
+                    
+                    console.log(user);
+
+                    // Assuming user[3] and user[8] represent email and phone preferences
+                    
+
+                    // Set the checkboxes based on user preferences
+
+                    console.log(user[3]);
+                    console.log(user[8]);
+
+                    emailNotificationsCheckbox.checked = user[3] === 'True'; // Assuming '1' represents enabled
+                    phoneNotificationsCheckbox.checked = user[8] === 'True'; // Assuming '1' represents enabled
+
+                } else {
+                    console.error('User not found in the CSV.');
+                }
+                } catch (error) {
+                  console.error('Error:', error);
+                }
+              }
+              
+              // Call the async function
+              fetchData();
+
+          
+              emailNotificationsCheckbox.addEventListener("change", async () => {
+                try {
+                  const response = await fetch("{% static 'info.csv' %}");
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const csvContent = await response.text();
+
+                // Now you can work with the CSV content
+                const lines = csvContent.trim().split('\n');
+                if (user_id <= lines.length) {
+                    
+                    const user = lines[user_id].split('|');
+                    if (emailNotificationsCheckbox.checked) {
+                      user[3] = "True";
+                      console.log(user[3]);
+                      console.log("User has enabled email notifications.");
+                  } else {
+                      user[3] = "False";
+                      console.log(user[3]);
+                      console.log("User has disabled email notifications.");
+                  }
+                  console.log(user);
+
+                  lines[user_id] = user.join('|');
+                        const modifiedCSV = lines.join('\n');
+                                console.log(modifiedCSV)
+
+                                fetch("{% url 'update_csv_file' %}", {
+                                  method: 'POST',
+                                  headers: {
+                                      'Content-Type': 'application/x-www-form-urlencoded',
+                                      'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token
+                                  },
+                                  body: `modifiedCSV=${encodeURIComponent(modifiedCSV)}`
+                              })
+                              .then(response => {
+                                  if (!response.ok) {
+                                      throw new Error('Network response was not ok');
+                                  }
+                                  console.log('CSV file has been updated.');
+                              })
+                              .catch(error => {
+                                  console.error('There was a problem updating the CSV file:', error);
+                              });
+                    // Set the checkboxes based on user preferences
+
+                } else {
+                    console.error('User not found in the CSV.');
+                }
+              } catch (error) {
+                console.error('Error:', error);
+              }
+                  
+              });
+          
+              phoneNotificationsCheckbox.addEventListener("change", async () => {
+                try {
+                  const response = await fetch("{% static 'info.csv' %}");
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const csvContent = await response.text();
+
+                // Now you can work with the CSV content
+                const lines = csvContent.trim().split('\n');
+                if (user_id <= lines.length) {
+                    
+                    const user = lines[user_id].split('|');
+                    
+                    console.log(user);
+
+                  
+                    if (phoneNotificationsCheckbox.checked) {
+                      user[8] = "True";
+                      console.log(user[8]);
+                      console.log("User has enabled email notifications.");
+                  } else {
+                      user[8] = "False";
+                      console.log(user[8]);
+                      console.log("User has disabled email notifications.");
+                  }
+                  console.log(user);
+
+                  lines[user_id] = user.join('|');
+                        const modifiedCSV = lines.join('\n');
+                                console.log(modifiedCSV)
+
+                                fetch("{% url 'update_csv_file' %}", {
+                                  method: 'POST',
+                                  headers: {
+                                      'Content-Type': 'application/x-www-form-urlencoded',
+                                      'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token
+                                  },
+                                  body: `modifiedCSV=${encodeURIComponent(modifiedCSV)}`
+                              })
+                              .then(response => {
+                                  if (!response.ok) {
+                                      throw new Error('Network response was not ok');
+                                  }
+                                  console.log('CSV file has been updated.');
+                              })
+                              .catch(error => {
+                                  console.error('There was a problem updating the CSV file:', error);
+                              });
+                    // Set the checkboxes based on user preferences
+
+                } else {
+                    console.error('User not found in the CSV.');
+                }
+              } catch (error) {
+                console.error('Error:', error);
+              }
+                  if (phoneNotificationsCheckbox.checked) {
+                      console.log("User has enabled phone notifications.");
+                  } else {
+                      console.log("User has disabled phone notifications.");
+                  }
+              });
+          </script>
+                    
                 </div>
             </div>
         </div>

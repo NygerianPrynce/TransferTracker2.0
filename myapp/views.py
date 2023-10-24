@@ -22,109 +22,150 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
 from django.contrib.auth import logout
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, logout,login
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, logout,login
-from django.http import HttpResponse, HttpResponseRedirect
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth import login, authenticate, logout
-from .forms import LoginForm, RegisterForm
+from .forms import SignupForm
+from .forms import LoginForm
+from django.templatetags.static import static
+import os
+from django.conf import settings
+import csv
+
+
+
+
 # myapp/views.py
 
 def index(request):
     return render(request, 'index.html')
 
 def login_view(request):
-    if request.method == "POST":
-        phone = request.POST.get('phone')
-        password = request.POST.get('password')
-        user = authenticate(username=phone, password=password)
-        if user:
-            login(request,user)
-            return HttpResponseRedirect('/users/home')
-        else:
-            error = " Sorry! Phone Number and Password didn't match, Please try again ! "
-            return render(request, 'login/index.html',{'error':error})
-    else:
-        return render(request, 'login/index.html')
-    '''
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
+        form = LoginForm(request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            print("User logged in:", user)
-            return redirect('home')
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            
+            user = authenticate(request, username=email, password=password)
+            
+            if user is not None:
+                login(request, user)
+                # Redirect to a success page or home page
+                return redirect('home')  # Change 'home' to your desired URL name
+            else:
+                form.add_error(None, 'Invalid email or password')
     else:
-        form = AuthenticationForm()
+        form = LoginForm()
+
     return render(request, 'login.html', {'form': form})
-    '''
+
 
 
 def logout_view(request):
     logout(request)
     return redirect('index')  # Redirect to your desired page after logout
 
-def signup_view(request):
-    if request.method == 'GET':
-        form = RegisterForm()
-        return render(request, 'signup.html', { 'form': form})
-    '''
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        pass_1 = request.POST.get('password1')
-        pass_2 = request.POST.get('password2')
-        if pass_1 == pass_2:
-             user = User.objects.create_user(
-                                              username=phone,
-                                              email=email,
-                                              password=pass_1,
-                                             )
-             return HttpResponseRedirect("/")
-        else:
-             error = " Password Mismatch "
-             return render(request, 'login/signup.html',{"error":error})
-        
-    else:
-         return render(request, 'login/signup.html')    
-        
-    '''    
-    '''
-    
-    
-    form = UserRegisterForm(request.POST)
-    if form.is_valid():
-        user = form.save()
-        username = form.cleaned_data.get('username')
-        print("User signed up:", username)
-        return redirect('home')
-    else:
-        form = UserRegisterForm()
-    return render(request, 'signup.html', {'form': form})
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib import messages
 
-    '''
+from django.contrib.auth.models import User
+
+def signup(request):
+    global new_user_id
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['password'] == form.cleaned_data['confirm_password']:
+                email = form.cleaned_data['email']
+                print(email)
+                password = form.cleaned_data['password']
+                print(password)
+                phone_number = form.cleaned_data['phone_number']
+                
+                email_notifs = form.cleaned_data['email_notification']
+                phone_notifs = form.cleaned_data['phone_notification']
+                print(phone_number)
+                
+                # Check if a user with the same email already exists
+                if User.objects.filter(username=email).exists():
+                    form.add_error('email', 'A user with this email already exists.')
+                    print("email issue")
+                else:
+                    # Create a new user
+                    csv_file = settings.CSV_LOC + "info.csv"  
+
+                    
+                    with open(csv_file, 'r') as file:
+                        csv_data = list(csv.reader(file))
+                   
+                   
+                    if (len(csv_data) > 1):
+                        new_user_id = len(csv_data)
+                    else:
+                        new_user_id = 1
+                    
+                    user = User.objects.create_user(username=email, email=email, password=form.cleaned_data['password'], first_name = new_user_id)
+                    login(request, user)
+                    
+                    data = {
+                    "id": new_user_id,
+                    "email": email,
+                    "phone_number": phone_number,
+                    "emailNotifs": email_notifs,
+                    "watchlistinfo":"",
+                    "pids": "",
+                    "cids": "",
+                    "lids": "",
+                    "phoneNotifs": phone_notifs,
+                    }
+                    
+                    fieldnames = ["id", "email", "phone_number", "emailNotifs", "watchlistinfo", "pids", "cids", "lids", "phoneNotifs"]
+
+                    with open(csv_file, mode='a', newline='') as file:
+                        writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter='|')
+
+                    # Write headers if the file is empty
+                        if file.tell() == 0:
+                            writer.writeheader()
+
+                        # Write the data for each user
+                        writer.writerow(data)
+                        #writer.writerow(data)
+
+                    print(f'CSV file "{csv_file}" has been updated.')
+
+                    
+                    
+                    
+                    return redirect('home')
+            else:
+                form.add_error('confirm_password', 'Passwords do not match')
+                print("password")
+    else:
+        form = SignupForm()
+
+    return render(request, 'signup.html', {'form': form})
 
 @login_required
 def home(request):
     return render(request, 'home.html')
 
 def player_search(request):
-    return render(request, 'player_search.html')
+    user_id = request.user.first_name
+    return render(request, 'player_search.html', {"user_id":user_id})
 
 def daily_transfers(request):
-    return render(request, 'daily_transfers.html')
+    user_id = request.user.first_name
+    return render(request, 'daily_transfers.html', {"user_id":user_id})
 
 def watchlist(request):
-    return render(request, 'watchlist.html')
+    user_id = request.user.first_name
+    return render(request, 'watchlist.html', {"user_id":user_id})
 
 def profile(request):
-    return render(request, 'profile.html')
+    user_id = request.user.first_name
+    return render(request, 'profile.html', {"user_id":user_id})
 
 def run_method(request):
     try:
@@ -174,6 +215,19 @@ def profile_view(request):
     
     return render(request, 'profile.html', context)
 
+from django.http import JsonResponse
 
+def update_csv_file(request):
+    if request.method == 'POST':
+        modified_csv = request.POST.get('modifiedCSV')
 
+        if modified_csv:
+            csv_file = settings.CSV_LOC + "info.csv" 
+            with open(csv_file, 'w') as file:
+                file.write(modified_csv)
 
+            return JsonResponse({'message': 'CSV file has been updated successfully.'})
+        else:
+            return JsonResponse({'error': 'No modified CSV data received.'}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=405)

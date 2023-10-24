@@ -625,7 +625,6 @@
 	 grid-template: auto / repeat(auto-fill, minmax(27em, 27em));
 }
  .card {
-  overflow: auto;
 	 margin: 0;
 	 height: 15em;
 	 display: flex;

@@ -1,8 +1,11 @@
-{% load static %}
+{%load static%}
 <!DOCTYPE html>
-<html lang="en">
+<!-- Coding By CodingNepal - codingnepalweb.com -->
+<html lang="en" dir="ltr">
   <head>
     <title>Transfer Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'signup.css'%}"  rel="stylesheet" />
     <meta
       name="description"
       content="Track Soccer Transfers Across The World and Never Miss Out Again!"
@@ -69,6 +72,11 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+  </head>
+  <link href="{% static 'index.css' %}" rel="stylesheet" />
+</head>
+  <header data-thq="thq-navbar" class="index-navbar">
     <style>
       [data-thq="thq-dropdown"]:hover > [data-thq="thq-dropdown-list"] {
           display: flex;
@@ -78,10 +86,6 @@
           transform: rotate(90deg);
         }
     </style>
-    <link rel="stylesheet" href="{% static 'style.css' %}" />
-  </head>
-  <link href="{% static 'index.css' %}" rel="stylesheet" />
-  <header data-thq="thq-navbar" class="index-navbar">
     <div class="index-container1">
       <div class="index-left">
         <a
@@ -101,17 +105,17 @@
       <nav class="index-links">
         <a
           href="{% url 'login' %}"
-                          rel="noreferrer noopener"
+          rel="noreferrer noopener"
           class="index-link02"
         >
           LOG IN
         </a>
-        <a
+          <a
           href="{% url 'signup' %}"
-                          rel="noreferrer noopener"
+          rel="noreferrer noopener"
           class="index-link03"
         >
-          <span class="index-text02">SIGN UP</span>
+        SIGN UP
           <br />
         </a>
       </nav>
@@ -167,74 +171,47 @@
       </div>
     </div>
   </header>
-
-
-<!-- Header -->
-<header id="header" class="ex-2-header">
-    <link rel="stylesheet" href="{% static 'logsign.css' %}">
-    <div class="container" >
-        <div class="row">
-            <div class="col-lg-12">
-                <h1>Sign Up</h1>
-                <p>Fill Out The Form Below To Make An Account <br> Already Signed Up? Then Just <a class="white" href="{% url 'login' %}">Log In</a></p> 
-
-                <!-- Sign Up Form -->
-                <div class="form-container" style="background-color:gray;">
-                  <form method="POST" novalidate>
-                    {% csrf_token %}                      
-                    {% for field in form %}
-                    <p>
-                      {% if field.errors %}
-                      <ul class="errorlist">
-                        {% for error in field.errors %}
-                        <li>{{ error }}</li>
-                        {% endfor %}
-                      </ul>
-                      {% endif %}
-                       {{ field.label_tag }} {{ field }}
-                    </p>
-                    {% endfor %}
-                    <input type="submit" value="Register" />
-                  </form>
-                  <!--
-                  <form method=post action="users/signup/">{% csrf_token %}
-                    <input type="text" name="phone" placeholde="Phone No">
-                    <input type="text" name="email" placeholde="Email">
-                    <input type="text" name="password1" placeholde="Password">
-                    <input type="text" name="password2" placeholde="Password Again">
-                    <input type="submit" value="signup">
-                    </form> 
-                  -->
-                  <!--
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="{{ form.full_name.id_for_label }}">Full Name:</label>
-                            {{ form.full_name }}
-                        </div>
-                        <div class="form-group">
-                            <label for="{{ form.username.id_for_label }}">Username:</label>
-                            {{ form.username }}
-                        </div>
-                        <div class="form-group">
-                            <label for="{{ form.email.id_for_label }}">Email:</label>
-                            {{ form.email }}
-                        </div>
-                        <div class="form-group">
-                            <label for="{{ form.password1.id_for_label }}">Password:</label>
-                            {{ form.password1 }}
-                        </div>
-                        <div class="form-group">
-                            <label for="{{ form.password2.id_for_label }}">Confirm Password:</label>
-                            {{ form.password2 }}
-                        </div>
-                        <button type="submit" class="form-control-submit-button">Sign Up</button>
-                    </form>
-                    -->
-                </div> <!-- end of form container -->
-                <!-- end of sign up form -->
-            </div> <!-- end of col -->
-        </div> <!-- end of row -->
-    </div> <!-- end of container -->
-</header> <!-- end of ex-header -->
-<!-- end of header -->
+   
+<body>
+  <div class="wrapper">
+    <h2>SIGN UP</h2>
+  
+    <form method="post">
+      {% csrf_token %} {# Include the CSRF token #}
+      <div class="input-box ">
+        {{ form.email.label_tag }} {# Render the label for the email field #}
+        {{ form.email }} {# Render the email input field #}
+      </div>
+      <div class="input-box ">
+        {{ form.phone_number.label_tag }} {# Render the label for the phone_number field #}
+        {{ form.phone_number }} {# Render the phone_number input field #}
+      </div>
+      <div class="input-box ">
+        {{ form.password.label_tag }} {# Render the label for the password field #}
+        {{ form.password }} {# Render the password input field #}
+      </div>
+      <div class="input-box">
+        {{ form.confirm_password.label_tag }} {# Render the label for the confirm_password field #}
+        {{ form.confirm_password }} {# Render the confirm_password input field #}
+      </div>
+      <div class="policy">
+        {{ form.email_notification.label_tag }} {# Render the label for the confirm_password field #}
+        {{ form.email_notification }}
+      </div>
+      <div class="policy">
+        {{ form.phone_notification.label_tag }} {# Render the label for the confirm_password field #}
+        {{ form.phone_notification }}
+      </div>
+      <div class="input-box button">
+        <input type="submit" value="Register Now">
+      </div>
+      <div class="text">
+        <h3>Already have an account? <a href="{% url 'login' %}"
+          rel="noreferrer noopener">Login now</a></h3>
+      </div>
+    </form>
+    
+  
+  </div>
+</body>
+</html>
