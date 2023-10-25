@@ -545,6 +545,8 @@ def findDailyTransfers(pIDs, cIDs, lIDs):
     print(today)
     URL = "https://www.transfermarkt.com/transfers/transfertagedetail/statistik/top/land_id_ab//land_id_zu//leihe//datum/2023-07-05/plus/1/galerie/0/page/1"
     URL = date_fix(URL, today)
+    URL = "https://www.transfermarkt.com/transfers/transfertagedetail/statistik/top/land_id_ab//land_id_zu//leihe//datum/2023-08-08/plus/1/galerie/0/page/1"
+
     maxPages = findMaxPages(URL)
     if(maxPages != -1):
         return createTransfers(URL, maxPages, pIDs, cIDs, lIDs)
