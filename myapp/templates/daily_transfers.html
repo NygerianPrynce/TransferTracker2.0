@@ -1,3 +1,4 @@
+
 {%load static%}
 <!DOCTYPE html>
 <html lang="en">
@@ -256,7 +257,7 @@
           </div>
         </header>
         <div class="daily-transfers-banner">
-          <h1 class="daily-transfers-text09">
+          <h1 class="daily-transfers-text09" style="line-height: 40pt;">
             Click The Button To Generate Today's Transfers!
           </h1>
           <div class="daily-transfers-container3">
@@ -265,8 +266,26 @@
             </button>
           </div>
         </div>
+<div id = "box">
+        <div class="box" >
+          <div class="shadow"></div>
+          <div class="gravity">
+            <div class="ball"></div>
+          </div>
+        </div>
+        <h1 style="text-align:center; margin-top: 30px;">Loading...</h1>
+      </div>
         <div id="result-container" class="container"></div>
         <script>
+hideLoading();
+          function showLoading() {
+            document.getElementById('box').style.display = 'block';
+        }
+        
+        // Function to hide the loading animation
+        function hideLoading() {
+            document.getElementById('box').style.display = 'none';
+        }
           var user_id = "{{ user_id }}";
 
           function getCookie(name) {
@@ -290,10 +309,11 @@ var pids;
 var cids;
 var lids;
 
-// Add an event listener to the "Run Daily Transferz" button
 document.getElementById('run-daily-transferz-button').addEventListener('click', function () {
+const resultContainer = document.getElementById('result-container');
+                            resultContainer.innerHTML = '';
     const csrfToken = getCookie('csrftoken');
-    
+    showLoading();
     // Retrieve data from localStorage
     fetch("{% static 'info.csv' %}")
         .then(response => {
@@ -304,21 +324,17 @@ document.getElementById('run-daily-transferz-button').addEventListener('click', 
         })
         .then(csvContent => {
             // Now you can work with the CSV content
-            console.log(user_id);
             const lines = csvContent.trim().split('\n');
             if (user_id <= lines.length) {
                 const user = lines[user_id].split('|');
-                console.log(user);
                 pids = user[5];
                 cids = user[6];
                 lids = user[7];
-                console.log(pids);
 
                 // Make the POST request to the server
                 fetch(`/run_daily_transferz?pids=${encodeURIComponent(pids)}&cids=${encodeURIComponent(cids)}&lids=${encodeURIComponent(lids)}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data); // For debugging purposes, check the response in the console
                         if (data.status === 'success') {
                             const resultContainer = document.getElementById('result-container');
                             resultContainer.innerHTML = ''; // Clear previous results
@@ -334,7 +350,6 @@ document.getElementById('run-daily-transferz-button').addEventListener('click', 
                                 }
 
                                 const subDivContent = str.slice(1, -1).split(")(");
-                                console.log(subDivContent);
 
                                 const kard = document.createElement('div');
                                 kard.classList.add("card");
@@ -370,6 +385,7 @@ document.getElementById('run-daily-transferz-button').addEventListener('click', 
                                 resultContainer.appendChild(kard);
                             });
                         }
+hideLoading();
                     })
                     .catch(error => console.error('Error:', error));
             } else {
@@ -379,7 +395,6 @@ document.getElementById('run-daily-transferz-button').addEventListener('click', 
         .catch(error => console.error('Error:', error));
 });
 
-            
         </script>
         <footer class="daily-transfers-footer">
           <img

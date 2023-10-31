@@ -255,15 +255,16 @@
           </div>
         </header>
         <div class="watchlist-banner">
-          <h1 class="watchlist-text09">Your Watchlist</h1>
-          <span class="watchlist-text10">
+          <h1 class="watchlist-text09"style="line-height: 40pt;">Your Watchlist</h1>
+          <span class="watchlist-text10"style="border: none">
             Your compiled list of Players, Clubs, and Leagues. Click one of them to remove it from your watchlist.
-          </s pan>
+          </span>
           <div class="watchlist-btn-group"></div>
         </div>
         <div id="result-container" class="container"></div>
 
         <script>
+
           var user_id = "{{ user_id }}";
           function getCookie(name) {
             let cookieValue = null;
@@ -290,11 +291,8 @@
         })
         .then(csvContent => {
             // Now you can work with the CSV content
-
-            console.log(user_id);
             const lines = csvContent.trim().split('\n');
             if (user_id <= lines.length) {
-              console.log(lines[user_id]);
               const user = lines[user_id].split('|');
 
               items = user[4].split('***');
@@ -306,12 +304,10 @@
               resultContainer.innerHTML = ''; // Clear previous results
               
               for(let item of items) {
-                console.log(item);
                   if (item.indexOf("(Player)") != -1) {
                       let itemCopy = item;
                       item = item.slice(8,-1)                      
                       const subDivContent = item.split(",");
-                     console.log(subDivContent);
       
                       const kard = document.createElement('div');
                       kard.classList.add("card");
@@ -358,20 +354,13 @@
                         spot = user[5].indexOf("," + subDivContent[subDivContent.length-2]);
                         id = user[5].slice(spot, spot + 1 + subDivContent[subDivContent.length-2].length);
 
-                        console.log(id);
-                        console.log(spot);
                         // Fetch the CSV file
 
-                        console.log(user[5]);
                         user[5] = user[5].replace(user[5].slice(spot, 1 + spot + id.length-1), "")
-                        console.log(user[5]);
                         spot2 = user[4].indexOf("***" + itemCopy)
-                        console.log(user[4]);
                         user[4] = user[4].replace(user[4].slice(spot2, 3 + spot2 + String(itemCopy).length), "");
-                        console.log(user[4]);
                         lines[user_id] = user.join('|');
                         const modifiedCSV = lines.join('\n');
-                                console.log(modifiedCSV)
 
                                 fetch("{% url 'update_csv_file' %}", {
                                   method: 'POST',
@@ -385,7 +374,6 @@
                                   if (!response.ok) {
                                       throw new Error('Network response was not ok');
                                   }
-                                  console.log('CSV file has been updated.');
                               })
                               .catch(error => {
                                   console.error('There was a problem updating the CSV file:', error);
@@ -399,10 +387,8 @@
                   } else if (item.indexOf("(Club)") != -1) {
                     
                       let itemCopy = item;
-                      console.log(item);
                       item = item.slice(6,-1)                      
                       const subDivContent = item.split(",");
-                     console.log( subDivContent);
       
                       const kard = document.createElement('div');
                       kard.classList.add("card");
@@ -450,20 +436,13 @@
                         spot = user[6].indexOf("," + subDivContent[1]);
                         id = user[6].slice(spot, spot + 1 + subDivContent[1].length);
 
-                        console.log(id);
-                        console.log(spot);
                         // Fetch the CSV file
 
-                        console.log(user[6]);
                         user[6] = user[6].replace(user[6].slice(spot, 1 + spot + id.length-1), "")
-                        console.log(user[6]);
                         spot2 = user[4].indexOf("***" + itemCopy)
-                        console.log(user[4]);
                         user[4] = user[4].replace(user[4].slice(spot2, 3 + spot2 + String(itemCopy).length), "");
-                        console.log(user[4]);
                         lines[user_id] = user.join('|');
                         const modifiedCSV = lines.join('\n');
-                                console.log(modifiedCSV)
 
                                 fetch("{% url 'update_csv_file' %}", {
                                   method: 'POST',
@@ -477,7 +456,6 @@
                                   if (!response.ok) {
                                       throw new Error('Network response was not ok');
                                   }
-                                  console.log('CSV file has been updated.');
                               })
                               .catch(error => {
                                   console.error('There was a problem updating the CSV file:', error);
@@ -489,10 +467,8 @@
                       resultContainer.appendChild(kard);
                   } else if (item.indexOf("(League)") != -1) {
                       let itemCopy = item;
-                      console.log(item);
                       item = item.slice(8,-1)                      
                       const subDivContent = item.split(",");
-                     console.log( subDivContent);
       
                      
                      const kard = document.createElement('div');
@@ -530,7 +506,6 @@
                      }
 
                      for (let i = 0; i < (subDivContent.length); i++) {
-                         console.log(subDivContent[i]);
                          if(subDivContent[i] != undefined){                             
                          if (subDivContent[i] == "-)"){
                              subDivContent[i] = "-";
@@ -561,20 +536,13 @@
                         spot = user[7].indexOf("," + subDivContent[1]);
                         id = user[7].slice(spot, spot + 1 + subDivContent[1].length);
 
-                        console.log(id);
-                        console.log(spot);
                         // Fetch the CSV file
 
-                        console.log(user[7]);
                         user[7] = user[7].replace(user[7].slice(spot, 1 + spot + id.length-1), "")
-                        console.log(user[7]);
                         spot2 = user[4].indexOf("***" + itemCopy)
-                        console.log(user[4]);
                         user[4] = user[4].replace(user[4].slice(spot2, 3 + spot2 + String(itemCopy).length), "");
-                        console.log(user[4]);
                         lines[user_id] = user.join('|');
                         const modifiedCSV = lines.join('\n');
-                                console.log(modifiedCSV)
 
                                 fetch("{% url 'update_csv_file' %}", {
                                   method: 'POST',
@@ -588,7 +556,6 @@
                                   if (!response.ok) {
                                       throw new Error('Network response was not ok');
                                   }
-                                  console.log('CSV file has been updated.');
                               })
                               .catch(error => {
                                   console.error('There was a problem updating the CSV file:', error);
@@ -599,7 +566,6 @@
                       resultContainer.appendChild(kard);
                       }
                   }/**/
-              
           } else {
               // Display error message in the result-container div
               document.getElementById('result-container').innerText = 'Error: ' + "oof";
@@ -611,8 +577,7 @@
         .catch(error => {
             console.error('There was a problem fetching the CSV file:', error);
         });
-        console.log(items);
-
+hideLoading();
       </script>
       
 

@@ -246,13 +246,14 @@
           </div>
         </header>
         <div class="search-banner">
-          <h1 class="search-text09">Search Items To Track</h1>
+          <h1 class="search-text09"style="line-height: 40pt;">Search Items To Track</h1>
           <div class="search-container3">
             <input
                 id="search-input"
               type="text"
               placeholder="Player, Club, or League..."
               class="search-textinput input form-control"
+style="width:100%;"
             />
             <button class="search-button button" id="search-button">
                 <a
@@ -264,12 +265,30 @@
                 </a>
             </button>
           </div>
-          <span class="search-text12">
-            Remember To Be As Specific As Possible!
+          <span class="search-text12"style="line-height: 40pt;text-align: center; color: red;">
+            Remember To Be As Specific As Possible To Decrease Loading Time!
           </span>
         </div>
+<div id = "box">
+        <div class="box" >
+          <div class="shadow"></div>
+          <div class="gravity">
+            <div class="ball"></div>
+          </div>
+        </div>
+        <h1 style="text-align:center; margin-top: 30px;">Loading...</h1>
+      </div>
         <div id="result-container" class="container"></div>
       <script>
+hideLoading();
+          function showLoading() {
+            document.getElementById('box').style.display = 'block';
+        }
+        
+        // Function to hide the loading animation
+        function hideLoading() {
+            document.getElementById('box').style.display = 'none';
+        }	
         function getCookie(name) {
           let cookieValue = null;
           if (document.cookie && document.cookie !== '') {
@@ -290,13 +309,12 @@
           const searchInput = document.getElementById('search-input');
   
           function performSearch() {
-          // Your search logic here
+showLoading();         
+ // Your search logic here
           const searchInput = document.getElementById('search-input').value;
           fetch(`/run_method?search_term=${encodeURIComponent(searchInput)}`)
               .then(response => response.json())
               .then(data => {
-                  console.log(user_id);
-                  //console.log(data); // For debugging purposes, check the response in the console
                   if (data.status === 'success') {
                     var skip = false;
   
@@ -331,7 +349,6 @@
                                     
                                     if (user[5].includes(subDivContent[7].replace(/\)/g, ''))) {
                                         console.log("skipping pids");
-                                        console.log(subDivContent[7].replace(/\)/g, ''));
                                         skip = true;
                                     }
                                 } else {
@@ -405,17 +422,12 @@
                                       const lines = csvContent.trim().split('\n');
                                       if (user_id <= lines.length) {
                                           const user = lines[user_id].split('|');
-                                          console.log(user);
                                           user[5] = user[5] + "," + subDivContent[7].replace(/\)/g, '');
                                           place = "***(Player)" + subDivContent;
-                                          console.log(place);
                                           user[4] = user[4] + place;
                                           lines[user_id] = user.join('|');
-                                          console.log(lines);
-                                          console.log(csvContent);
 
                                           const modifiedCSV = lines.join('\n');
-                                          console.log(modifiedCSV)
 
                                           fetch("{% url 'update_csv_file' %}", {
                                             method: 'POST',
@@ -429,7 +441,6 @@
                                             if (!response.ok) {
                                                 throw new Error('Network response was not ok');
                                             }
-                                            console.log('CSV file has been updated.');
                                         })
                                         .catch(error => {
                                             console.error('There was a problem updating the CSV file:', error);
@@ -469,7 +480,6 @@
                                     
                                     if (user[6].includes(subDivContent[1].replace(/\)/g, ''))) {
                                         console.log("skipping cids");
-                                        console.log(subDivContent[1].replace(/\)/g, ''));
                                         skip = true;
                                     }
                                 } else {
@@ -539,18 +549,12 @@
                                       const lines = csvContent.trim().split('\n');
                                       if (user_id <= lines.length) {
                                           const user = lines[user_id].split('|');
-                                          console.log(user);
                                           user[6] = user[6] + ',' + subDivContent[1].replace(/\)/g, '');
                                           place = "***(Club)" + subDivContent;
-                                          console.log(place);
                                           user[4] = user[4] + place;
                                           lines[user_id] = user.join('|');
-                                          console.log(lines);
-                                          console.log(csvContent);
 
                                           const modifiedCSV = lines.join('\n');
-                                          console.log(modifiedCSV)
-
                                           fetch("{% url 'update_csv_file' %}", {
                                             method: 'POST',
                                             headers: {
@@ -563,7 +567,6 @@
                                             if (!response.ok) {
                                                 throw new Error('Network response was not ok');
                                             }
-                                            console.log('CSV file has been updated.');
                                         })
                                         .catch(error => {
                                             console.error('There was a problem updating the CSV file:', error);
@@ -611,7 +614,6 @@
                                     
                                     if (user[7].includes(subDivContent[1].replace(/\)/g, ''))) {
                                         console.log("skipping lids");
-                                        console.log(subDivContent[1].replace(/\)/g, ''));
                                         skip = true;
                                     }
                                 } else {
@@ -660,7 +662,6 @@
                               }
   
                               for (let i = 0; i < (subDivContent.length); i++) {
-                                  console.log(subDivContent[i]);
                                   if(subDivContent[i] != undefined){                             
                                   if (subDivContent[i] == "-)"){
                                       subDivContent[i] = "-";
@@ -700,17 +701,11 @@
                                     const lines = csvContent.trim().split('\n');
                                     if (user_id <= lines.length) {
                                         const user = lines[user_id].split('|');
-                                        console.log(user);
                                         user[7] = user[7] + ',' + subDivContent[1].replace(/\)/g, '');
                                         place = "***(League)" + subDivContent;
-                                        console.log(place);
                                         user[4] = user[4] + place;
                                         lines[user_id] = user.join('|');
-                                        console.log(lines);
-                                        console.log(csvContent);
-
                                         const modifiedCSV = lines.join('\n');
-                                        console.log(modifiedCSV)
 
                                         fetch("{% url 'update_csv_file' %}", {
                                           method: 'POST',
@@ -724,7 +719,6 @@
                                           if (!response.ok) {
                                               throw new Error('Network response was not ok');
                                           }
-                                          console.log('CSV file has been updated.');
                                       })
                                       .catch(error => {
                                           console.error('There was a problem updating the CSV file:', error);
@@ -752,7 +746,8 @@
                       // Display error message in the result-container div
                       document.getElementById('result-container').innerText = 'Error: ' + data.message;
                   }
-              })
+hideLoading();              
+})
               .catch(error => console.error('Error:', error));
           }
   
